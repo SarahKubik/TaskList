@@ -16,7 +16,7 @@ When the tasks or notes are completed or no longer needed there is a delete icon
 
 ## Mock-up
 
-![Task List Note Taker App click the black button "Get Started."](https://res.cloudinary.com/marcomontalbano/image/upload/v1631346045/video_to_markdown/images/google-drive--1PAHAbgzgX8oiBC8QivUmiXtFfvXU8XMO-c05b58ac6eb4c4700831b2b3070cd403.jpg)
+[![Task List Note Taker App](https://res.cloudinary.com/marcomontalbano/image/upload/v1631346045/video_to_markdown/images/google-drive--1PAHAbgzgX8oiBC8QivUmiXtFfvXU8XMO-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://drive.google.com/file/d/1PAHAbgzgX8oiBC8QivUmiXtFfvXU8XMO/ "Task List Note Taker App")
 
 ## Installation
 
