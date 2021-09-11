@@ -35,4 +35,4 @@ Github: <https://github.com/SarahKubik/TaskList.git>
 
 URL: <https://sarahkubik.github.io/TaskList/>
 
-Heroku:
+Heroku: <https://tasklist-bc.herokuapp.com/>
