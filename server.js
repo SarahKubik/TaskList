@@ -1,89 +1,104 @@
-//Dependencies 
-const fs = require('fs');
-const path = require('path');
-let notes = require('/db/db.json');
+// Dependencies
 
-// Express Server and PORT
-const express = require("express");
+const express = require('express');
+const path = require('path');
+let notes = require("./db/db.json");
+const fs = require('fs');
+// Unique ID for new notes
+const uuid = require('uuid');
+
+// Sets up the Express App
+
 const app = express();
 // set new port in terminal export = number.
 const PORT = process.env.PORT || 5000;
 
-//Setup for app to handle data parsing.
-app.use(express.static('public'));
+// Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
-
-// Middleware 
 app.use(express.json());
+// Middleware
+app.use(express.static("public"));
 
-// const { stringify } = require('querystring');
 
-// Display
-app.get('/api/notes/', function (req, res) {
-  fs.readFile('/db/db.json', 'utf8', function (err, data) {
-      if (err) {
-        console.log(err);
-        return;
-      }
+
+
+// Routes
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, './public/index.html')));
+
+app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, './public/notes.html')));
+
+
+// // Displays all characters
+// app.get('/api/characters', (req, res) => res.json(characters));
+app.get('/api/notes', (req, res) => res.json(notes));
+
+
+
+app.post("/api/notes", function (req, res) {
+  try {
+    // reads the json file
+    notes = fs.readFileSync("db/db.json", "utf8");
+    console.log(notes);
+
+    // parse the data to get an array of objects
+    notes = JSON.parse(notes);
+    // Set new notes id
+    req.body.id = uuid.v4();
+    // add the new note to the array of note objects
+    notes.push(req.body); // req.body - user input
+    // make it string(stringify)so you can write it to the file
+    notes = JSON.stringify(notes);
+
+    // writes the new note to file
+    fs.writeFile("./db/db.json", notes, "utf8", function (err) {
+
+      // error handling
+      if (err) throw err;
+      notes = JSON.parse(notes);
       res.json(notes);
-  });
-});
-
-// Create new note
-
-app.post('/api/notes', function (req, res) {
-    let randLetter = String.fromCharCode(65 + Math.floor(Math.random()*26));
-    let id = randLetter + Date(now);
-    let newNote = {
-      id: id,
-      title: req.body.title,
-      text: req.body.text
-};
-    console.log(typeof notes);
-    notes.push(newNote);
-    const stringifyNote = JSON.stringify(notes);
-    res.json(notes);
-    fs.writeFile('/db/db.json', stringifyNote, (err) => {
-      if (err) console.log (err);
-      else {
-        console.log("Successfully saved note.");
-      }
-    
-  });
-});
-
-// Delete note
-app.delete('/api/notes/:id', function (req, res) {
-  let noteId = req.params.id;
-  fs.readFile('/db/db.json', "utf-8", function (err,data) {
-    let updatedNotes = JSON.parse(data).filter((note) => {
-      console.log ('note.id', note.id);
-      console.log ('noteID', noteID);
-      return note.id !== noteID;
     });
-    notes = updatedNotes;
-    const stringifyNote = JSON.stringify(updatedNotes);
-    fs.writeFile('/db/db.json', stringifyNote, (err) => {
-      if (err) console.log (err);
-      else {
-        console.log ( "Successfully deleted note.");
-      }
+
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+});
+
+// Delete a note
+
+app.delete("/api/notes/:id", function (req, res) {
+  try {
+    //  reads the json file
+    notes = fs.readFileSync("./db/db.json", "utf8");
+
+    // parse the data to get an array of the objects
+    notes = JSON.parse(notes);
+
+    // delete the old note from the array on note objects
+    notes = notes.filter(function (note) {
+      return note.id != req.params.id;
     });
-    res.json (stringifyNote);
-  });
+
+    // make it string(stringify)so you can write it to the file
+    notes = JSON.stringify(notes);
+    // write the new notes to the file
+    fs.writeFile("./db/db.json", notes, "utf8", function (err) {
+      // error handling
+      if (err) throw err;
+      notes = JSON.parse(notes);
+      res.json(notes);
+    });
+
+    // error handling
+  } catch (err) {
+
+    console.log(err);
+    throw err;
+  }
 });
 
-//HTML Routes
-app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/notes.html'));
-});
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/index.html'));
-});
+// Starts the server to begin listening
 
-
-app.listen(PORT, () => {
-  console.log(`App listening on PORT: ${PORT}`);
-});
-
+app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
